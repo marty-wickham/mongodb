@@ -35,8 +35,9 @@ def show_menu():
     print("2. Find a record")
     print("3. Edit a record")
     print("4. Delete a record")
-    print("5. Exit")
-
+    print("5. Show all documnets")
+    print("6. Exit")
+    print("")
     option = input("Enter option: ")
     return option
 
@@ -136,6 +137,22 @@ def delete_record():
                 print("Document not deleted.")
 
 
+def show_all():
+    try:
+        documents = coll.find()
+    except:
+        print("")
+        print("Error accessing database")
+    if not documents:
+        print("Error! No Results found.")
+
+    for doc in documents:
+        print("")
+        for k, v in doc.items():
+            if k != "_id":
+                print(k.capitalize() + ": " + v.capitalize())
+        
+
 def main_loop():
     while True:
         option = show_menu()
@@ -148,6 +165,8 @@ def main_loop():
         elif option == "4":
             delete_record()
         elif option == "5":
+            show_all()
+        elif option == "6":
             conn.close()
             break
         else:
