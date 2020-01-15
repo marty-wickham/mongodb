@@ -33,14 +33,14 @@ coll = conn[DBS_NAME][COLLECTION_NAME]
 
 
 # Return everything
-"""
+'''
 documents = coll.find()
 
 # The line above will return an object that needs to be iterated through
 
 for doc in documents:
     print(doc)
-"""
+'''
 
 # Insert a new record
 """
@@ -79,30 +79,31 @@ for doc in documents:
 """
 
 # Delete an entry
-"""
-coll.remove({'first': 'Douglas', 'last': 'Adams'})
+'''
+coll.delete_one({'first': 'douglas'})
 
 documents = coll.find()
 
 for doc in documents:
     print(doc)
-"""
+'''
 
 # Update an entry
-"""
-coll.update_one({'nationality': 'american'}, {'$set': {'hair_color': 'maroon'}})
+'''
+coll.update_one({'first': 'George'}, {'$set': {'first': 'george', 'last': 'rr martin'}})
 
-documents = coll.find({'nationality': 'american'})
+documents = coll.find()
 
 for doc in documents:
     print(doc)
-"""
+'''
 
 # Update many entries
-
+'''
 coll.update_many({'nationality': 'american'}, {'$set': {'hair_color': 'silver'}})
 
 documents = coll.find({'nationality': 'american'})
 
 for doc in documents:
     print(doc)
+'''

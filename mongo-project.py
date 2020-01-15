@@ -2,17 +2,19 @@ import os
 import env
 import pymongo
 
-# Notice that all python constants are written in CAPITAL LETTERS with underscores separating the words
+# Notice that all python constants are written in CAPITAL LETTERS with
+# underscores separating the words
 
 
-# Using the os library to set a constant called MONGODB_URI by using the .getnenv() method to read in the enviroment variable we just set
-MONGO_URI = os.getenv('MONGO_URI')  
+# Using the os library to set a constant called MONGODB_URI by using
+# the .getenv() method to read in the enviroment variable we just set
+MONGO_URI = os.getenv('MONGO_URI')
 
 # Set another constant and give t the value of our databse name
-DBS_NAME =  "myTestDB" 
+DBS_NAME = "myTestDB"
 
 # The nameof our MongoDB collection
-COLLECTION_NAME = "myFirstMDB" 
+COLLECTION_NAME = "myFirstMDB"
 
 print("Your Mongo URI is " + str(MONGO_URI))
 
@@ -24,7 +26,8 @@ def mongo_connect(url):
         return conn
     except pymongo.errors.ConnectionFailure as e:
         # e is the error message
-        print("Could not be connected to MongoDB: %S") % e 
+        print("Could not be connected to MongoDB: %S") % e
+
 
 def show_menu():
     print("")
@@ -43,9 +46,9 @@ def get_record():
     first = input("Enter first name > ")
     last = input("Enter last name > ")
 
-    try: 
-        doc = coll.find({'first': first.lower(), 'last': last.lower()})
-    except: 
+    try:
+        doc = coll.find_one({'first': first.lower(), 'last': last.lower()})
+    except:
         print("")
         print("Error accessing database")
     if not doc:
@@ -57,36 +60,83 @@ def get_record():
 def add_record():
     print("")
     first = input("Enter first name > ")
-    last = input("Enter lat name > ")
+    last = input("Enter last name > ")
     dob = input("Enter date of birth > ")
     gender = input("Enter gender > ")
-    hair_color = input("Enter hair color > ")
+    hair_color = input("Enter hair colour > ")
     occupation = input("Enter occupation > ")
     nationality = input("Enter nationality > ")
 
-    new_doc = {'first': first.lower(), "last": last.lower, 'dob': dob, 'gender': gender, 'hair_color': hair_color, 
+    new_doc = {'first': first.lower(), 'last': last.lower(), 'dob': dob,  
+                'gender': gender, 'hair_color': hair_color, 
                 'occupation': occupation, 'nationality': nationality}
             
     try:
         coll.insert_one(new_doc)
         print("")
         print("Document inserted")
-
     except:
         print("Error accessing the database")
 
 
 def find_record():
+    # Define a variable, which gets the results of our get_record() function. 
     doc = get_record()
+
     if doc:
         print("")
         for k, v in doc.items():
+            # Check is if the key is not equal to ID. "_id" id the default key that is created by Mongo.
             if k != "_id":
                 print(k.capitalize() + ": " + v.capitalize())
 
 
+def edit_record():
+    doc = get_record()
+
+    if doc:
+        update_doc = {}
+        print("")
+        for k, v in doc.items():
+            # Check is if the key is not equal to ID. "_id" id the default key that is created by Mongo.
+            if k != "_id":
+                # Want the value to appear in these square brackets so that we can see what the current value
+                update_doc[k] = input(k.capitalize() + " [" + v + "] > ")
+
+                if update_doc[k] == "":
+                    # If nothing is input, reset the value to it's current value
+                    update_doc[k] = v
+        
+        try:
+            coll.update_one(doc, {'$set': update_doc})
+            print("")
+            print("Document updated")
+        except:
+            print("Error accessing the database")
+
+
+def delete_record():
+    doc = get_record()
+
+    if doc:
+        print("")
+        for k, v in doc.items():
+            if k != "_id":
+                print(k.capitalize() + v.capitalize())
+        
+        print("")
+        confirmation = input("Is this the document you want to delete?\nY or N? > ")
+        print("")
+
+        if confirmation.lower() == 'y':
+            try:
+                coll.delete_one(doc)
+                print("Document deleted!")
+            except:
+                print("Document not deleted.")
+
+
 def main_loop():
-    # while True sets the loop to run forever
     while True:
         option = show_menu()
         if option == "1":
@@ -94,9 +144,9 @@ def main_loop():
         elif option == "2":
             find_record()
         elif option == "3":
-            print("You have selected option 3")
+            edit_record()
         elif option == "4":
-            print("You have selected option 4")
+            delete_record()
         elif option == "5":
             conn.close()
             break
