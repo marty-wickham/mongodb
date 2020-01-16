@@ -6,7 +6,7 @@ import pymongo
 # underscores separating the words
 
 
-# Using the os library to set a constant called MONGODB_URI by using
+# Using the os library to set a constant called MONGO_URI by using
 # the .getenv() method to read in the enviroment variable we just set
 MONGO_URI = os.getenv('MONGO_URI')
 
